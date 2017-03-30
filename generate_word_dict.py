@@ -20,20 +20,19 @@ roots_file_in = open(input_roots,"r")
 roots_file_out = open(output_roots,"wb")
 output_all_out = open(output_all,"wb")
 # Reading suffix file
-suffixes = Set()
+suffixes = set()
 for line in suffix_file_in:
     suff = line.strip().split(" ",1)[0].split("/")[0]
-    suffixes.update(suff)
+    suffixes.add(suff)
 pickle.dump(suffixes,suffix_file_out)
 
 # Reading roots file
-roots = Set()
+roots = set()
 for line in roots_file_in:
      root = line.strip().split(" ",1)[0].split("/")[0]
-     roots.update(root)
+     roots.add(root)
 pickle.dump(roots,roots_file_out)
-
-suffixes.union(roots)
-pickle.dump(suffixes,output_all_out)
-
+all_set = suffixes | roots
+pickle.dump(all_set,output_all_out)
+output_all_out.close()
 
