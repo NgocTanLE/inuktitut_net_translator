@@ -4,7 +4,7 @@ This script is used to generate root and suffixes dictionary that help us segmen
 
 import pdb
 import numpy as np
-from sets import Set
+# from sets import Set
 import pickle
 
 input_suffix = "helper_data/suffixes.en.txt"
@@ -30,6 +30,8 @@ pickle.dump(suffixes,suffix_file_out)
 roots = set()
 for line in roots_file_in:
      root = line.strip().split(" ",1)[0].split("/")[0]
+     if len(root)>1:
+     	root = root[:-1]
      roots.add(root)
 pickle.dump(roots,roots_file_out)
 all_set = suffixes | roots
