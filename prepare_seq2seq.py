@@ -20,8 +20,10 @@ from nmt_config import *
 
 # In[ ]:
 
-data_fname = {"en": os.path.join(data_dir, "text_all.en"),
-              "fr": os.path.join(data_dir, "text_all.fr")}
+#data_fname = {"en": os.path.join(data_dir, "text_all.en"),
+#              "fr": os.path.join(data_dir, "text_all.fr")}
+data_fname = {"en": os.path.join(data_dir, "segmented_file.en"),
+              "fr": os.path.join(data_dir, "segmented_file.fr")}
 
 
 # In[ ]:

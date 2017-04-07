@@ -38,6 +38,7 @@ if DATASET == "OPEN_SUB":
     model_dir = os.path.join("hu_en_model_{0:d}".format(NUM_SENTENCES))
     input_dir = os.path.join("hu_en_data_{0:d}".format(NUM_SENTENCES))
     data_dir = os.path.join("hu_en_data")
+    data_dir = os.path.join("hu_en_data")
     # Subtitiles data
     # use 90% of the data for training
     NUM_TRAINING_SENTENCES = (NUM_SENTENCES * 90) // 100
@@ -64,7 +65,8 @@ elif DATASET == "INUKTITUT":
     print("Inuktitut English dataset configuration")
     model_dir = os.path.join("in_en_model_{0:d}".format(NUM_SENTENCES))
     input_dir = os.path.join("in_en_data_{0:d}".format(NUM_SENTENCES))
-    data_dir = os.path.join("in_en_data")
+    #data_dir = os.path.join("in_en_data")
+    data_dir = os.path.join("subword_segmentation/5000")
     # use 90% of the data for training
     NUM_TRAINING_SENTENCES = (NUM_SENTENCES * 90) // 100
     # remaining (max 10%) left to be used for dev. For training, we limit the dev size to 500 to speed up perplexity and Bleu computation
@@ -110,7 +112,7 @@ use_attn = SOFT_ATTN
 hidden_units = 200
 
 load_existing_model = True
-create_buckets_flag = False
+create_buckets_flag = True
 #---------------------------------------------------------------------
 # Training Parameters
 #---------------------------------------------------------------------
