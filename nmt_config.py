@@ -23,10 +23,9 @@ SOFT_ATTN = 1
 # for appending post fix to output
 attn_post = ["NO_ATTN", "SOFT_ATTN"]
 
-NUM_SENTENCES = 50000
+NUM_SENTENCES = 5000
 
 DATASET = ["OPEN_SUB", "INUKTITUT"][1]
-
 EXP_NAME_PREFIX="baseline"
 
 if DATASET == "OPEN_SUB":
@@ -56,6 +55,8 @@ if DATASET == "OPEN_SUB":
     elif NUM_SENTENCES == 100000:
         # 100K
         EXP_NAME= EXP_NAME_PREFIX + "_bogomasina"
+    else:
+	EXP_NAME= EXP_NAME_PREFIX + "_small_uqi"
 #-----------------------------------------------------------------
 elif DATASET == "INUKTITUT":
 #-----------------------------------------------------------------
@@ -64,7 +65,7 @@ elif DATASET == "INUKTITUT":
     print("Inuktitut English dataset configuration")
     model_dir = os.path.join("in_en_model_{0:d}".format(NUM_SENTENCES))
     input_dir = os.path.join("in_en_data_{0:d}".format(NUM_SENTENCES))
-    data_dir = os.path.join("in_en_data")
+    data_dir = os.path.join("in_segment_data_5000")
     # use 90% of the data for training
     NUM_TRAINING_SENTENCES = (NUM_SENTENCES * 90) // 100
     # remaining (max 10%) left to be used for dev. For training, we limit the dev size to 500 to speed up perplexity and Bleu computation
@@ -82,6 +83,9 @@ elif DATASET == "INUKTITUT":
     elif NUM_SENTENCES == 100000:
         # 100K
         EXP_NAME= EXP_NAME_PREFIX + "_ailliijuq"
+    else:
+	EXP_NAME= EXP_NAME_PREFIX + "_small_uqi"
+
 #-----------------------------------------------------------------
 
 if not os.path.exists(model_dir):
