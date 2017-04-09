@@ -21,9 +21,12 @@ import subprocess
 def segmenting(word):
    call = ['java', '-jar', 'Uqailaut.jar', word]
    # ret = subprocess.call(call, stdout=subprocess.PIPE, stderr=None)
-   ret = subprocess.Popen(call,
+   try:
+      ret = subprocess.Popen(call,
                      stdout=subprocess.PIPE,
                      stderr=subprocess.STDOUT)
+   except:
+       pdb.set_trace()
    # if ret > 0:
    #    print("Warning - result was",ret)
    #    return -1
@@ -42,32 +45,29 @@ def append_dict(words,w2i,i2w):
             w2i["fr"][word.encode()] = last_idx + 1
             i2w["fr"][last_idx+1] = word.encode()
 
-def save_to_file(buckets,idx):
-	filename = "helper_data/seg_bucket_"+str(idx)+".p"
-	fd = open(filename,"wb")
-	pickle.dump(buckets,fd)
-
+def save_to_file(segmented_sentences):
+    filename = "in_segment_data_5000/text.en"
+    fd = open(filename,"w")
+    for sentence in segmented_sentences:
+        fd.write(' '.join(sentence)+"\n")
+    fd.close()
 
 bucket_data=[]
 idx_to_take = 0
 # for idx,buck_indx in  enumerate(range(num_buckets)):
-    w2i = pickle.load(open(w2i_path, "rb"))
-    i2w = pickle.load(open(i2w_path, "rb"))
-    segmented_bucket = []
+w2i = pickle.load(open(w2i_path, "rb"))
+i2w = pickle.load(open(i2w_path, "rb"))
+segmented_sentences = []
 #   bucket_data = pickle.load(open(bucket_in_filename.format(buck_indx+1),"rb"))
-    # bucket_filename = bucket_in_filename.format(buck_indx+1)
-    # bucket_data = pickle.load(open(bucket_filename,"rb"))
-  	data = open("in_en_data_50000/text.fr")
-    for in_fr, in_en in bucket_data:
-    	# for each word
-        for w_in_fr in in_fr:
-            word = i2w["fr"][w_in_fr].decode()
-            # try:    
-            #     	word = re.findall("[&1-9a-zA-Z]+",word)[0] 
-            # except:
-            # 	pdb.set_trace()
+# bucket_filename = bucket_in_filename.format(buck_indx+1)
+# bucket_data = pickle.load(open(bucket_filename,"rb"))
+data = open("in_en_data/text_all.fr")
+i=0
+for idx,sentence in enumerate(data):
+    sentence = sentence.strip().split()
+    sentence_list = []
+    for word in sentence:
             translated_words = []
-            # segmenting word
             for line in segmenting(word):
                 translated_words.append(line.decode())
 
@@ -75,12 +75,12 @@ idx_to_take = 0
                 translated_words = cut_sentence(translated_words[idx_to_take])
             else:
                 translated_words = [word]
-
-            # appending dict
             append_dict(translated_words,w2i,i2w)    
             
-            translated_words = [w2i["fr"].get(word.encode(),UNK_ID) for word in translated_words]              
-            print(word,' -> ', [i2w["fr"][w].decode() for w in translated_words])
-            print((translated_words,in_en))
-            segmented_bucket.append((translated_words,in_en))
-    save_to_file(segmented_bucket,idx)
+            # translated_words = [w2i["fr"].get(word.encode(),UNK_ID) for word in translated_words]              
+            sentence_list.extend(translated_words)
+            # print(word,' -> ', [i2w["fr"][w].decode() for w in translated_words])
+    print(idx,' ',sentence_list)
+    segmented_sentences.append(sentence_list)
+    if idx%500==0:
+        save_to_file(segmented_sentences)
