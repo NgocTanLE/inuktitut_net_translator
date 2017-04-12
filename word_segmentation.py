@@ -128,8 +128,8 @@ def segment_sentence(root_dict,suffix_dict,i2w,sentence):
     segmented_sentence = []
     for word in sentence:
         # iterating over word
-        word = i2w["fr"][word].decode()
-        print("translating {}".format(word))
+        # word = i2w["fr"][word].decode()
+        # print("translating {}".format(word))
         segmented_word = segment_word(root_dict,suffix_dict,word)
         segmented_sentence.append(segmented_word)
     return segmented_sentence
@@ -148,21 +148,10 @@ i2w = pickle.load(open(i2w_path, "rb"))
 root_dict = pickle.load(open(output_roots,"rb"))
 suffix_dict = pickle.load(open(output_suffix,"rb"))
 suffixes_melted_dict = pickle.load(open(changing_suffixes_filename,"rb"))
-pdb.set_trace()
 
-# reading bucket data
-bucket_data=[]
-for buck_indx in  range(num_buckets):
-#   bucket_data = pickle.load(open(bucket_in_filename.format(buck_indx+1),"rb"))
-    bucket_filename = bucket_in_filename.format(buck_indx+1)
-    bucket_data = pickle.load(open(bucket_filename,"rb"))
 
-for line in bucket_data:
-        data = line[0]
-        out = segment_sentence(root_dict, suffixes_melted_dict, i2w, data)
-        print("-------")
-        print(line)
+data = open("in_en_data/text_all.fr")
+for line in data:
+        line = line.strip().split()
+        out = segment_sentence(root_dict, suffixes_melted_dict, i2w, line)
         print(out)        
-        out=translate_word_to_index(w2i,out)
-        print(out)        
-        pdb.set_trace()
