@@ -10,26 +10,35 @@ import pickle
 
 # because the vocabulary has been previously processed
 # and everything that appeared just once has been marked as UNK
-v = pickle.load(open("data/vocab.dict", "rb"))
+v = pickle.load(open("in_en_data_50000/vocab.dict", "rb"))
 v_en = v["en"]
 v_jp = v["fr"]
+
+
+
+EN = 0
+IN = 1
+SENT_LEN = 0
+WORD_TYPE = 1
+TOKENS = 2
 
 def read_input(fname, fname2):
 
     data = []
-    for fnamex in [fname, fname2]:
+    _sent_len = {}
+    for idx,fnamex in enumerate([fname, fname2]):
         # define objects to store
         words = defaultdict(int)
         sent_lengths = []
         with open(fnamex, "r") as f:
             # count occurrences of each word
             for line in f:
-                sline = line.split()
+                sline = line.strip().split()
                 sent_lengths.append(len(sline))
                 for word in sline:
                     words[word] += 1
-            types = len(words)
-            tokens = sum(words.values())
+        types = len(words)
+        tokens = sum(words.values())
             # count unk words and its length
             # count less than the pre-processed text
             # don't really know why
@@ -40,52 +49,69 @@ def read_input(fname, fname2):
 
         data.append([sent_lengths, types, tokens])
 
-    unk_en = data[0][1] - len(v_en)
-    unk_jp = data[1][1] - len(v_jp)
-    data[0].append(unk_en)
-    data[1].append(unk_jp)
+    unk_en = data[EN][WORD_TYPE] - len(v_en)
+    unk_jp = data[IN][WORD_TYPE] - len(v_jp)
+    data[EN].append(unk_en)
+    data[IN].append(unk_jp)
 
 
-    sns.distplot(data[0][0])
+    sns.distplot(data[EN][SENT_LEN])
     plt.xlabel("length")
     plt.ylabel("frequency")
     plt.title("English sentences length distribution")
     plt.grid(True)
     plt.xticks()
-    #plt.savefig("english_distribution.png")
-    sns.plt.show()
+    plt.savefig("english_distribution.png")
+    # sns.plt.show()
 
-    sns.distplot(data[1][0])
+    plt.clf()
+    sns.distplot(data[IN][SENT_LEN])
     plt.xlabel("length")
     plt.ylabel("frequency")
     plt.title("Inuktitut sentences length distribution")
     plt.grid(True)
-    #plt.savefig("inuktitut_distribution.png")
-    sns.plt.show()
+    plt.xticks()
+    plt.savefig("inuktitut_distribution.png")
+    # sns.plt.show()
 
-    sns.distplot(data[0][0], color='b')
-    sns.distplot(data[1][0], color='g')
+    plt.clf()
+    sns.distplot(data[EN][SENT_LEN], color='b',label="english",kde=False)
+    sns.distplot(data[IN][SENT_LEN], color='g',label="inuktitut",kde=False)
     plt.xlabel("length")
     plt.ylabel("frequency")
-    plt.title("English Inuktitut sentences length distribution")
+    plt.title("English-Inuktitut sentences length distribution")
+    plt.legend()
     plt.grid(True)
-    #plt.savefig("english_inuktitut_distribution.png")
-    sns.plt.show()
+    plt.savefig("english_inuktitut_distribution.png")
 
-    s1 = np.array(data[0][0])
-    s2 = np.array(data[1][0])
-    sns.jointplot(s1, s2, kind="reg")
+    # sns.plt.show()
+
+    plt.clf()
+    sns.set(style="white", color_codes=True)
+    s1 = np.array(data[EN][SENT_LEN])
+    s2 = np.array(data[IN][SENT_LEN])
+    g = sns.jointplot(s1, s2,color="g",size=10)
     plt.grid(True)
-    #plt.savefig("english_inuktitut_correlation.png")
-    sns.plt.show()
+    # g.set_xlabel('English')
+    # g.set_ylabel('Inuktitut')
+    plt.savefig("english_inuktitut_correlation.png")
+    # sns.plt.show()
 
-    sys.stderr.write("\ntypes - L1: "+str(data[0][1])+", L2: "+str(data[1][1]))
-    sys.stderr.write("\ntokens -  L1: "+str(data[0][2])+", L2: "+str(data[1][2]))
-    sys.stderr.write("\ntype-token ratios -  L1: "+str(round((data[0][1]/data[0][2])*100,3))+"%"+
-                     ", L2: "+str(round((data[1][1]/data[1][2])*100,3))+"%")
-    sys.stderr.write("\nUNK words - L1: "+str(data[0][3])+", L2: "+str(data[1][3]))
+    sys.stderr.write("\ntypes - English: "+str(data[0][1])+", Inuktitut: "+str(data[1][1]))
+    sys.stderr.write("\ntokens -  English: "+str(data[0][2])+", Inuktitut: "+str(data[1][2]))
+    sys.stderr.write("\ntype-token ratios -  English: "+str(round((data[0][1]/data[0][2])*100,3))+"%"+
+                     ", Inuktitut: "+str(round((data[1][1]/data[1][2])*100,3))+"%")
+    sys.stderr.write("\nUNK words - English: "+str(data[0][3])+", Inuktitut: "+str(data[1][3])+"\n")
 
     return data
+
+
+
+# fileFr=open("in_en_data/text_all.en","r")
+# fileEn=open("in_en_data/text_all.fr","r")
+filenameFr="in_en_data/text_all.fr"
+filenameEn="in_en_data/text_all.en"
+read_input(filenameEn,filenameFr)
 
 # def compare(data):
 #     sys.stderr.write("\ntypes - L1: "+str(data[0][2])+", L2: "+str(data[1][2]))
